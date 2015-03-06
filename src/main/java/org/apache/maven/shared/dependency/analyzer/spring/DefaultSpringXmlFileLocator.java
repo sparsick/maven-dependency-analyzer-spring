@@ -1,5 +1,6 @@
 /**
  * Copyright 2010 Tobias Gierke <tobias.gierke@code-sourcery.de>
+ * Copyright 2015 Sandra Parsick <mail@sandra-parsick.de>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +16,16 @@
  */
 package org.apache.maven.shared.dependency.analyzer.spring;
 
-import org.apache.maven.plugin.logging.Log;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.io.FileUtils;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
@@ -95,18 +94,15 @@ public class DefaultSpringXmlFileLocator
             return false;
         }
 
-        final BufferedReader in = new BufferedReader( new FileReader( file ) );
-
-        try
-        {
-            final String line = in.readLine();
-            // TODO: This is a VERY basic check...
-            return line != null && line.startsWith( "<?xml" );
+        List<String> readLines = FileUtils.readLines(file);
+        
+        for (String line : readLines) {
+            if (line != null && line.contains("<beans")) {
+                return true;
+            }
         }
-        finally
-        {
-            in.close();
-        }
+        
+        return false;
     }
 
     private void scanDirectoryForSpringXmls( File directory, FileFilter selector, Set<File> springXmls )
