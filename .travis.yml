@@ -1,0 +1,7 @@
+language: java
+install: 
+    - sudo apt-install subversion
+    - svn co http://svn.apache.org/repos/asf/maven/shared/tags/maven-dependency-analyzer-1.6 maven-dependency-analyzer
+    - cd maven-dependency-analyzer 
+    - patch -p0 -F3 < ../apache-maven-dependency-analyzer-1.6.patch
+    - mvn install
