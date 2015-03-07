@@ -1,7 +1,3 @@
-2010-05-09
-
-Last modified: 2010-10-20
-
 Introduction
 ------------
 
@@ -10,63 +6,51 @@ This project enhances the Maven Dependency Plugin
 http://maven.apache.org/plugins/maven-dependency-plugin
 
 by adding support for extracing dependency information
-from a project's Spring XML files.
+from a project's Spring XML files. It is a fork of 
+https://github.com/toby1984/maven-dependency-analyzer-spring
 
 When enabled, a project's resources and test resources (usually located
 in src/main/resources and src/test/resources) will be scanned for Spring XML files and all
 bean definitions will be considered as project dependencies as well.
+
+Differences with the fork 
+--------------------------
+* Update the dependencies to maven-dependency-analyzer
+* Improve the logic for detecting Spring XML files
+* Reduce the changes in the superclass DefaultProjectDependencyAnalyzer
 
 Requirements
 ------------
 
 Java JDK 1.5+ (both for compiling AND RUNNING the plugin)
 Maven 2.2.1+ (older versions will probably work as well)
+Maven Dependency Plugin 2.10+
 
 Compiling and installing
 ------------------------
-
-*UPDATE* : For ease of use I wrapped up a .tgz containing the patched maven-dependency-analyzer / maven-dependency-plugin 
-and maven-dependency-analyzer-spring artifacts. Just extract binaries/patched_plugins_repo.tgz into your 
-Maven repository folder (~/.m2/repository on Unix machines) and you should be good to go.
-
-If you want to do the patching & compiling yourself (which I recommend since that way you can alter the pom files
-and assign your own custom version numbers to the patched plugin/components to avoid mixups etc. ... 
-relying on SNAPSHOT versions is generally a bad idea).
 
 To actually get the maven-dependency-plugin to support this extension:
 
 1. Patch and mvn install maven-dependency-analyzer 1.1
 
-svn co http://svn.apache.org/repos/asf/maven/shared/tags/maven-dependency-analyzer-1.1 maven-dependency-analyzer
+svn co http://svn.apache.org/repos/asf/maven/shared/tags/maven-dependency-analyzer-1.6 maven-dependency-analyzer
 cd maven-dependency-analyzer 
-patch -p0 -F3 <maven-dependency-analyzer_1.1.patch
+patch -p0 -F3 < apache-maven-dependency-analyzer-1.6.patch
 mvn install
 
-2. Patch and mvn install maven-dependency-plugin 2.1
-
-svn co http://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.1 maven-dependency-plugin
-cd maven-dependency-plugin
-patch -p0 <maven-dependency-plugin_2.1.patch
-mvn install
-
-3. Install maven-dependency-analyzer-spring
+2. Install maven-dependency-analyzer-spring
 
 cd maven-dependency-analyzer-spring 
 mvn install
 
-I'm trying to get the Maven guys to accept my patches 
-(see http://jira.codehaus.org/browse/MDEP-262) but 
-since I'm new to Maven plugin development the code will 
-most likely need some more work (if it gets accepted at all).
+I open a ticket (see http://jira.codehaus.org/browse/MSHARED-412) for this change. 
 
 Usage
 -----
 
-The patched & installed maven-dependency-plugin currently has version 2.1-SNAPSHOT.
-
 To enable scanning Spring XMLs for dependencies you need to add 
 this project's artifact as a dependency of the maven-dependency-plugin 
-*AND* set the plugin'S new 'analyzer' property to value 'spring'. 
+and set the plugin'S 'analyzer' property to value 'spring'. 
 
 Declare the maven-dependency-plugin in your pom.xml using the following
 XML snippet:
@@ -77,7 +61,7 @@ XML snippet:
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.1-SNAPSHOT</version>
+        <version>2.10</version>
         <dependencies>
           <dependency>
             <groupId>de.codesourcery.maven.shared</groupId>
